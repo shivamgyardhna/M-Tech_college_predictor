@@ -6,15 +6,32 @@ st.set_page_config(layout="wide")
 
 # Load data
 @st.cache_data
-def load_data():
-    df = pd.read_csv("Data/ccmt_2025_data.csv")
+def load_data(year=2025):
+    df = pd.read_csv(f"Data/ccmt_{str(year)}_data.csv")
     return df
 
-df = load_data()
+# df = load_data(year_choice=2025)
+
+# --- Sidebar Filters ---
+st.sidebar.header("🎯 Filter Options")
+
+# 0. Year Type
+year_choice = st.sidebar.radio(
+    "Select Year Type",
+    options=[2025, 2024, 2023, 2022, 2021],
+    index=0
+)
+
+if year_choice != 2026:
+    df = load_data(year_choice)  # Reload data for selected year
 
 # Helper: Extract institute type
 def get_institute_type(name):
+    if not isinstance(name, str):
+        return "OTHER"
+
     name = name.lower()
+
     if "indian institute of technology" in name:
         return "IIT"
     elif "indian institute of information technology" in name:
@@ -26,8 +43,7 @@ def get_institute_type(name):
 
 df["Institute Type"] = df["Institute"].apply(get_institute_type)
 
-# --- Sidebar Filters ---
-st.sidebar.header("🎯 Filter Options")
+
 
 # 1. Institute Type
 institute_choice = st.sidebar.radio(
@@ -114,9 +130,10 @@ if pg_selected:
     df = df[df["PG Program"].isin(pg_selected)]
 
 # 3. Category filter
-categories = df["Category"].unique().tolist()
-categories.sort()
-categories = ["All"] + categories  # Add "All" option
+categories = sorted(
+    df["Category"].dropna().astype(str).unique().tolist()
+)
+categories = ["All"] + categories
 
 category_selected = st.sidebar.selectbox(
     "Select Category",
