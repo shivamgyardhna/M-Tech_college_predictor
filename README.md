@@ -16,6 +16,8 @@ The goal of this project is to make large CCMT cutoff tables **easy to analyze, 
 
 **Shivam**  
 🔗 Portfolio: https://shivamgyardhna.github.io/Shivam_portfolioo/
+**Live**  
+🔗 website: https://m-tech-college-predictor.streamlit.app/
 
 ---
 
